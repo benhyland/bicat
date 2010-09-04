@@ -1,6 +1,6 @@
 package bh.bicat.parser
 
-import matcher.ResultMatchers
+import bh.bicat.test.matcher.ResultMatchers
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 
@@ -65,8 +65,6 @@ class ParserErrorTest extends FunSuite with ShouldMatchers with ResultMatchers {
     r1 should not be (successful)
   }
 
-  // postprocess errors
-
   test("disallow directed cycles") {
     val r1 = Parser.parse2CellGraph("testgraph {f: A ->B g: B->C h: A->C f g => h; p: C->D q: D->B }")
     r1 should not be (successful)
@@ -80,6 +78,4 @@ class ParserErrorTest extends FunSuite with ShouldMatchers with ResultMatchers {
     val r3 = Parser.parse2CellGraph("testgraph { X Y Z f: A ->B g: B->C h:A->C f g => h; }")
     r3 should not be (successful)
   }
-
-  test("disallow graphs without a pasting scheme")(pending)
 }

@@ -3,9 +3,11 @@ package bh.bicat.graph
 import org.jgrapht.alg.CycleDetector
 import org.jgrapht.DirectedGraph
 import org.jgrapht.graph.DefaultDirectedGraph
+import org.jgrapht.traverse.DepthFirstIterator
+import org.jgrapht.traverse.GraphIterator
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.Builder
+import scala.collection.mutable.ListBuffer
 
 sealed abstract class GraphItem;
 
@@ -28,40 +30,63 @@ class Graph(val name: String, val zerocells: Set[ZeroCell], val onecells: Set[On
   val graph : DirectedGraph[String,String] = new DefaultDirectedGraph[String, String](classOf[String]);
   for( v <- zerocells ) graph.addVertex(v.id);
   for( e <- onecells ) graph.addEdge( e.tail.id, e.head.id, e.id );
-  println( "zerocells: " + zerocells.mkString(", ") )
-  println( "onecells: " + onecells.mkString(", ") )
-  println( "twocells: " + twocells.mkString(", ") )
+  val (sources, sinks) = getCandidates
 
-  override def toString() = { graph.toString() }
+  private def getCandidates = {
+    val sources = ListBuffer.empty[String]
+    val sinks = ListBuffer.empty[String]
+    graph.vertexSet() foreach { v =>
+      if( graph.inDegreeOf(v) == 0 ) sources += v
+      if( graph.outDegreeOf(v) == 0 ) sinks += v
+    }
+    (sources.toList, sinks.toList)
+  }
+
+  override def toString() = {
+    "[zerocells(" + zerocells.mkString(", ") +
+    "), onecells(" + onecells.mkString(", ") +
+    "), twocells(" + twocells.mkString(", ") + ")]"
+  }
 
   def getError() : Option[String] = {
     errorCyclic orElse
     errorNoUniqueSourceSink orElse
+    errorNoPastingScheme orElse
     None
   }
 
-  def errorCyclic = {
+  private def errorCyclic = {
     val cd = new CycleDetector(graph)
     if( cd.detectCycles() ) Some("Graph contains a cycle")
     else None
   }
 
-  def errorNoUniqueSourceSink = {
-    val (sources, sinks) = getCandidates
+  private def errorNoUniqueSourceSink = {
     if( sources.size != 1 ) Some("No unique source found. Candidates were %s".format(sources.mkString(", ")))
     else if( sinks.size != 1 ) Some("No unique sink found. Candidates were %s".format(sinks.mkString(", ")))
     else None
   }
 
-  def getCandidates = {
-    val sources : Builder[String, List[String]] = List.newBuilder
-    val sinks : Builder[String, List[String]] = List.newBuilder
-    graph.vertexSet() foreach { v =>
-      if( graph.inDegreeOf(v) == 0 ) sources += v
-      if( graph.outDegreeOf(v) == 0 ) sinks += v
-    }
-    (sources.result, sinks.result)
+  private def errorNoPastingScheme = {
+    val path = findPath(sources(0), sinks(0))
+    println("path: " + path.mkString(", "))
+
+    // pick any path s->t, make new graph from it, maintain tail and head for scheme
+    // add any 2cell that fits to the graph
+    // add means add all edges in the 2cell's paths, updating the scheme tail and head
+    // fits means that some part of the head or tail of the 2cell is present on the tail or head of the scheme, respectively
+    // we pass iff all 2cells are used
+    None
   }
 
-  // check for pasting scheme
+  private def findPath(source: String, sink: String) : List[String] = {
+    val it : GraphIterator[String,String] = new DepthFirstIterator(graph, source)
+    findPath(it, ListBuffer.empty, sink)
+  }
+  private def findPath(it : GraphIterator[String,String], path: ListBuffer[String], target: String) : List[String] = {
+    val next = it.next()
+    path += next
+    if( target == next ) path.toList
+    else findPath(it, path, target)
+  }
 }

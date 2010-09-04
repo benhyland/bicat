@@ -1,8 +1,8 @@
-package bh.bicat.parser
+package bh.bicat.graph
 
 import org.scalatest.FunSuite
 
-class ParserOutputTest extends FunSuite {
+class GraphOutputTest extends FunSuite {
 
   test("graph can write dot output")(pending)
 }

@@ -1,4 +1,4 @@
-package bh.bicat.parser.matcher
+package bh.bicat.test.matcher
 
 import bh.bicat.parser.Parser
 import Parser.ParseResult

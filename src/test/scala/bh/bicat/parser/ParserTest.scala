@@ -1,7 +1,7 @@
 package bh.bicat.parser
 
 import bh.bicat.graph._
-import matcher.ResultMatchers
+import bh.bicat.test.matcher.ResultMatchers
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 
