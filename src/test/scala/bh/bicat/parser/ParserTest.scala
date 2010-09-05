@@ -88,7 +88,9 @@ class ParserTest extends FunSuite with ShouldMatchers with ResultMatchers {
   }
 
   test("graph") {
-    val graph = Parser.parse2CellGraphFragment("testgraph { f : A -> B g: B->C h: A->C f g => h; }")(Parser.graphcheck).get
+    val res = Parser.parse2CellGraphFragment("testgraph { f : A -> B g: B->C h: A->C f g => h; }")(Parser.graphcheck)
+    res should be (successful)
+    val graph = res.get
     graph.zerocells should equal (Set(A, B, C))
     graph.onecells should equal (Set(f, g, h))
     assert(graph.twocells(alpha))
@@ -97,7 +99,9 @@ class ParserTest extends FunSuite with ShouldMatchers with ResultMatchers {
   }
 
   test("small valid graph") {
-    val graph: Graph = Parser.parse2CellGraph("testgraph { A B C f: A->B g: B->C h: A->C f g => h; }").get
+    val res = Parser.parse2CellGraph("testgraph { A B C f: A->B g: B->C h: A->C f g => h; }")
+    res should be (successful)
+    val graph = res.get 
     assert(graph.zerocells == Set(A, B, C))
     assert(graph.onecells == Set(f, g, h))
     assert(graph.twocells(alpha))

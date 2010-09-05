@@ -3,8 +3,6 @@ package bh.bicat.graph
 import org.jgrapht.alg.CycleDetector
 import org.jgrapht.DirectedGraph
 import org.jgrapht.graph.DefaultDirectedGraph
-import org.jgrapht.traverse.DepthFirstIterator
-import org.jgrapht.traverse.GraphIterator
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
@@ -68,25 +66,7 @@ class Graph(val name: String, val zerocells: Set[ZeroCell], val onecells: Set[On
   }
 
   private def errorNoPastingScheme = {
-    val path = findPath(sources(0), sinks(0))
-    println("path: " + path.mkString(", "))
-
-    // pick any path s->t, make new graph from it, maintain tail and head for scheme
-    // add any 2cell that fits to the graph
-    // add means add all edges in the 2cell's paths, updating the scheme tail and head
-    // fits means that some part of the head or tail of the 2cell is present on the tail or head of the scheme, respectively
-    // we pass iff all 2cells are used
-    None
-  }
-
-  private def findPath(source: String, sink: String) : List[String] = {
-    val it : GraphIterator[String,String] = new DepthFirstIterator(graph, source)
-    findPath(it, ListBuffer.empty, sink)
-  }
-  private def findPath(it : GraphIterator[String,String], path: ListBuffer[String], target: String) : List[String] = {
-    val next = it.next()
-    path += next
-    if( target == next ) path.toList
-    else findPath(it, path, target)
+    if( Paster(graph, onecells, twocells, sources(0), sinks(0)).hasPastingScheme ) None
+    else Some("No pasting scheme found")
   }
 }
