@@ -6,7 +6,6 @@ import org.jgrapht.graph.DefaultDirectedGraph
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
-import scala.collection.mutable
 
 sealed abstract class GraphItem;
 

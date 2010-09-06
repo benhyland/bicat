@@ -25,9 +25,7 @@ class Paster(val graph : DirectedGraph[String, String], val onecells: Set[OneCel
   }
 
   def hasPastingScheme : Boolean = {
-    val yes = unpasteables.isEmpty
-    println( "final rem (hasScheme:" + yes+"): " + unpasteables.mkString(", ") )
-    yes
+    unpasteables.isEmpty
   }
 
   // TODO: remove inline prints when confident, tidy up unroll and suchlike
@@ -35,7 +33,7 @@ class Paster(val graph : DirectedGraph[String, String], val onecells: Set[OneCel
   def findUnpasteables = paste(path, path, ListBuffer(twocells.toList:_*))
 
   def paste(tail: List[String], head: List[String], remainingFaces: ListBuffer[TwoCell]) : List[TwoCell] = {
-    println( "tail: " + tail.mkString(", ") + " --- head: " + head.mkString(", ") + " --- rem: " + remainingFaces.map( f => "[tail:"+ unroll(f.tail.edges).mkString(",") + " - head:" + unroll(f.head.edges).mkString(",") + "]").mkString(", "))
+//    println( "tail: " + tail.mkString(", ") + " --- head: " + head.mkString(", ") + " --- rem: " + remainingFaces.map( f => "[tail:"+ unroll(f.tail.edges).mkString(",") + " - head:" + unroll(f.head.edges).mkString(",") + "]").mkString(", "))
     remainingFaces.find( f => canPaste(tail, unroll(f.head.edges)) ).map( f => paste(doPaste(tail, unroll(f.head.edges), unroll(f.tail.edges)), head, remainingFaces-=f)).getOrElse(
     remainingFaces.find( f => canPaste(head, unroll(f.tail.edges)) ).map( f => paste(tail, doPaste(head, unroll(f.tail.edges), unroll(f.head.edges)), remainingFaces-=f)).getOrElse(
     remainingFaces.toList))
@@ -43,7 +41,7 @@ class Paster(val graph : DirectedGraph[String, String], val onecells: Set[OneCel
 
   def canPaste( path: List[String], facePath: List[String] ) = {
     val yes = path.containsSlice(facePath)
-    println( "canPaste " + yes + " path: " + path.mkString(", ") + " --- facePath: " + facePath.mkString(", ") )
+//    println( "canPaste " + yes + " path: " + path.mkString(", ") + " --- facePath: " + facePath.mkString(", ") )
     yes
   }
   def doPaste( path: List[String], facePath: List[String], insertion: List[String] ) = path.patch(path.indexOfSlice(facePath), insertion, facePath.length)
