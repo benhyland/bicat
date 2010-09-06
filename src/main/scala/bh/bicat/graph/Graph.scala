@@ -6,6 +6,7 @@ import org.jgrapht.graph.DefaultDirectedGraph
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
+import scala.collection.mutable
 
 sealed abstract class GraphItem;
 
@@ -40,11 +41,7 @@ class Graph(val name: String, val zerocells: Set[ZeroCell], val onecells: Set[On
     (sources.toList, sinks.toList)
   }
 
-  override def toString() = {
-    "[zerocells(" + zerocells.mkString(", ") +
-    "), onecells(" + onecells.mkString(", ") +
-    "), twocells(" + twocells.mkString(", ") + ")]"
-  }
+  // error detection
 
   def getError() : Option[String] = {
     errorCyclic orElse
@@ -68,5 +65,23 @@ class Graph(val name: String, val zerocells: Set[ZeroCell], val onecells: Set[On
   private def errorNoPastingScheme = {
     if( Paster(graph, onecells, twocells, sources(0), sinks(0)).hasPastingScheme ) None
     else Some("No pasting scheme found")
+  }
+
+  // output
+  override def toString() = {
+      "[zerocells(" + zerocells.mkString(", ") +
+      "), onecells(" + onecells.mkString(", ") +
+      "), twocells(" + twocells.mkString(", ") + ")]"
+  }
+
+  def toDotString() = {
+    "digraph " + name + " {\n\n" +
+    "rankdir=LR;\n" +
+    "edge [shape=circle];" +
+    "\n\n" +
+    zerocells.foldLeft("")(_ + _.id + "\n") +
+    "\n" +
+    onecells.foldLeft("")((output, oc) => output + oc.tail.id + " -> " + oc.head.id + " [label=" + oc.id +"];\n") +
+    "}"
   }
 }

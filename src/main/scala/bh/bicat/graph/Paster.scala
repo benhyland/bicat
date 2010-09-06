@@ -30,6 +30,8 @@ class Paster(val graph : DirectedGraph[String, String], val onecells: Set[OneCel
     yes
   }
 
+  // TODO: remove inline prints when confident, tidy up unroll and suchlike
+
   def findUnpasteables = paste(path, path, ListBuffer(twocells.toList:_*))
 
   def paste(tail: List[String], head: List[String], remainingFaces: ListBuffer[TwoCell]) : List[TwoCell] = {
@@ -60,11 +62,3 @@ object Paster {
   def apply(graph : DirectedGraph[String, String], onecells: Set[OneCell], twocells: Set[TwoCell], s: String, t: String) =
     new Paster(graph, onecells, twocells, s, t)
 }
-// pick any path s->t, make new graph from it, maintain tail and head for scheme
-    // add any 2cell that fits to the graph
-    // add means add all edges in the 2cell's paths, updating the scheme tail and head
-    // fits means that some part of the head or tail of the 2cell is present on the tail or head of the scheme, respectively
-    // we pass iff all 2cells are used
-//    val path = findPath(sources(0), sinks(0))
-//    println("path: " + path.mkString(", "))
-//    val (tail, head) = (path, path)

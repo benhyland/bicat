@@ -1,4 +1,6 @@
-package bh.bicat.parser
+package bh.bicat.apps
+
+import bh.bicat.parser.Parser
 
 object App {
   def main(args : Array[String]) : Unit = {
