@@ -10,6 +10,10 @@ object Parser extends StandardTokenParsers {
   // determine a manipulation path that leads from current to target
   // might need a basic ui for that
 
+  // TODO: algorithm for testing isomorphism between schemes:
+  // check for isomorphism between source, sink, tail, head of scheme, then
+  // given some pasting on one scheme check that an isomorphic pasting exists on the other
+
   implicit def graphParser: Parser[Graph] = phrase(graphcheck)
 
   def parse2CellGraph(in: String) : ParseResult[Graph] = parse2CellGraphFragment(in)
