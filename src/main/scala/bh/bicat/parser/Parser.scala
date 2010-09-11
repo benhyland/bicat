@@ -5,6 +5,11 @@ import scala.util.parsing.combinator.syntactical.StandardTokenParsers
 // todo: move parser to class+companion
 object Parser extends StandardTokenParsers {
 
+  // TODO: extend dsl for labeling, and for equational analysis/proof assistance -
+  // given a current graph, a target graph and a set of equalities on candidate subgraphs,
+  // determine a manipulation path that leads from current to target
+  // might need a basic ui for that
+
   implicit def graphParser: Parser[Graph] = phrase(graphcheck)
 
   def parse2CellGraph(in: String) : ParseResult[Graph] = parse2CellGraphFragment(in)
