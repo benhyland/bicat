@@ -77,5 +77,17 @@ class ParserErrorTest extends FunSuite with ShouldMatchers with ResultMatchers {
     r2 should not be (successful)
     val r3 = Parser.parse2CellGraph("testgraph { X Y Z f: A ->B g: B->C h:A->C f g => h; }")
     r3 should not be (successful)
+    val r4 = Parser.parse2CellGraph("""
+      testgraph { f: A ->B g: B->C h:A->C f g => h;
+      p: X->Y q:Y->Z r:X->Z p q => r;
+      }""")
+    r4 should not be (successful)
+    val r5 = Parser.parse2CellGraph("""
+      testgraph { f: A ->B g: B->C h:A->C f g => h;
+      p: X->Y q:Y->X
+      }""")
+    println(r5)
+    r5 should not be (successful)
+
   }
 }
