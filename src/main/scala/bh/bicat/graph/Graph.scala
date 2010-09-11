@@ -73,6 +73,7 @@ class Graph(val name: String, val zerocells: Set[ZeroCell], val onecells: Set[On
       "), twocells(" + twocells.mkString(", ") + ")]"
   }
 
+  // TODO: dot should draw exactly the pasting scheme and faces that have been detected by the paster
   def toDotString() = {
     "digraph " + name + " {\n\n" +
     "rankdir=LR;\n" +
